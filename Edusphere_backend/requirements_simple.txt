@@ -20,5 +20,9 @@ Crawl4AI
 litellm
 python-dotenv
 
+# Password hashing. bcrypt is the backend passlib uses here.
+passlib
+bcrypt
+
 # Outbound HTTP (Google token verification)
 httpx

@@ -8,6 +8,45 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
+from passlib.context import CryptContext
+
+# Passwords are stored as bcrypt hashes, never as the password itself.
+#
+# A hash is one-way: it can confirm a password is correct, but it cannot be
+# turned back into the password. So if this file is ever leaked - committed by
+# accident, or read off a server - nobody learns anyone's password, and a
+# password reused on another site is not compromised.
+#
+# bcrypt is also deliberately slow, which is what makes guessing millions of
+# candidates impractical.
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def verify_password(password: str, stored: str) -> bool:
+    """
+    True if `password` matches `stored`.
+
+    Accounts created before hashing existed have their password sitting in the
+    file as plain text. Those are compared directly so nobody is locked out, and
+    the caller then upgrades them - see authenticate_user.
+    """
+    if not stored:
+        return False
+    if stored.startswith(("$2a$", "$2b$", "$2y$")):
+        try:
+            return pwd_context.verify(password, stored)
+        except Exception:
+            return False
+    return password == stored
+
+
+def is_hashed(stored: str) -> bool:
+    return bool(stored) and stored.startswith(("$2a$", "$2b$", "$2y$"))
+
 class Database:
     def __init__(self, db_path: str = "./data"):
         self.db_path = Path(db_path)
@@ -184,7 +223,7 @@ class Database:
         user_id = f"user_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         users[user_id] = {
             "email": email,
-            "password": password,  # In production, this should be hashed
+            "password": hash_password(password),
             "name": name or email.split('@')[0],
             "created_at": datetime.now().isoformat(),
             "last_active": datetime.now().isoformat(),
@@ -200,16 +239,26 @@ class Database:
         users = self._load_json(self.users_file)
         
         for user_id, user_data in users.items():
-            if user_data.get("email") == email and user_data.get("password") == password:
-                # Update last active
-                user_data["last_active"] = datetime.now().isoformat()
-                self._save_json(self.users_file, users)
-                return {
-                    "success": True, 
-                    "user_id": user_id, 
-                    "name": user_data.get("name"),
-                    "message": "Login successful"
-                }
+            if user_data.get("email") != email:
+                continue
+            stored = user_data.get("password", "")
+            if not verify_password(password, stored):
+                continue
+
+            # Upgrade an old plain-text password to a hash on the next correct
+            # login. This is the only moment the password is available to hash,
+            # so old accounts convert themselves as people sign in.
+            if not is_hashed(stored):
+                user_data["password"] = hash_password(password)
+
+            user_data["last_active"] = datetime.now().isoformat()
+            self._save_json(self.users_file, users)
+            return {
+                "success": True,
+                "user_id": user_id,
+                "name": user_data.get("name"),
+                "message": "Login successful"
+            }
         
         return {"success": False, "message": "Invalid email or password"}
     

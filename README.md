@@ -127,19 +127,34 @@ The system exposes a fully documented RESTful interface. Below are the primary e
 
 Stated plainly, because a reader will find them anyway:
 
-- **Passwords are stored in plaintext** in `data/users.json` and compared with
-  `==`. This is a demo authentication flow, not a secure one. Do not reuse a real
-  password here.
+- **Sessions are not tokenised.** Passwords are hashed (bcrypt, see below), but
+  the client identifies itself with a user id rather than a signed session token,
+  so this is not an authentication scheme to put real accounts behind.
 - **Storage is JSON files**, not a database. Fine for a single instance;
   concurrent writes would not be.
 - **The corpus is a point-in-time crawl** of K. J. Somaiya admissions and
   scholarship pages. Answers are only as current as the last crawl, so anything
   that matters should be confirmed on the official site.
 
+## 🔐 Password handling
+
+Passwords are stored as **bcrypt hashes**, never as the password itself. A hash
+is one-way: it can confirm a password is correct but cannot be turned back into
+it, so a leak of `data/users.json` exposes nobody's password — and bcrypt is
+deliberately slow, which makes guessing at scale impractical.
+
+Accounts created before hashing existed still log in, and are **upgraded to a
+hash on their next successful login** — the only moment the password is
+available to hash.
+
+`python Edusphere_backend/test_auth.py` covers this: 15 checks, including that
+the password never appears in `users.json`, that identical passwords hash
+differently (salting), and that legacy accounts convert and keep working.
+
 ## 🔮 Roadmap
 
 - [ ] **Data layer**: move from the JSON file-store to PostgreSQL with SQLAlchemy.
-- [ ] **Security**: bcrypt password hashing and JWT sessions, replacing the demo flow above.
+- [ ] **Sessions**: signed JWT session tokens, replacing the user-id-in-the-client flow.
 - [ ] **Streaming**: token-by-token responses over WebSockets instead of a single POST.
 - [ ] **Scheduled re-crawl**, so the corpus does not silently go stale.
 - [ ] **Containerization**: `docker-compose` for frontend, backend and database.
