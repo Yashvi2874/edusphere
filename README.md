@@ -81,6 +81,12 @@ Ollama model if you would rather not use a hosted one.
 
 `.env` is gitignored. Never commit it.
 
+> **On the free tier's quota.** Gemini's free tier caps both requests per minute
+> and requests per day. Once the cap is reached the app says so plainly and still
+> shows the retrieved sources — retrieval never depends on the API — and it
+> starts writing answers again when the quota resets. If you are demonstrating
+> this to someone, avoid burning the allowance beforehand.
+
 ### 2. Run it
 
 ```bash

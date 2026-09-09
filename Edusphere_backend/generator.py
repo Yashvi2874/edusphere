@@ -55,7 +55,36 @@ class LLMGenerator:
             return response.choices[0].message.content
         except Exception as e:
             print(f"Error in LLM generation: {str(e)}")
-            return f"I found some information, but I'm having trouble summarizing it right now. Here is a snippet: {context[:500]}..."
+            detail = str(e).lower()
+
+            # Gemini's free tier allows 20 requests a minute. Hitting that is
+            # normal during a demo and clears itself in under a minute, so say
+            # so rather than making it look like the app is broken.
+            if "ratelimit" in detail or "429" in detail or "resource_exhausted" in detail:
+                # Plain hyphen, not an em dash: this string is printed to a
+                # Windows console in some setups, where a non-ASCII dash comes
+                # out as a replacement character.
+                return (
+                    "I am being rate-limited by the language model right now - the free tier "
+                    "allows a limited number of requests per minute. Please ask again in a "
+                    "moment. Here is what I found in the meantime:\n\n"
+                    f"{context[:500]}..."
+                )
+
+            # No key, or a bad one: the retrieval half still works, so make the
+            # actual cause obvious instead of hiding it behind a generic message.
+            if "api key" in detail or "api_key_invalid" in detail or "401" in detail or "authentication" in detail:
+                return (
+                    "The language model is not configured, so I cannot write an answer — but I "
+                    "did find the relevant pages. Set GEMINI_API_KEY in Edusphere_backend/.env "
+                    "to enable written answers.\n\n"
+                    f"{context[:500]}..."
+                )
+
+            return (
+                "I found some information, but I'm having trouble summarizing it right now. "
+                f"Here is a snippet: {context[:500]}..."
+            )
 
 # Global instance.
 # LITELLM_MODEL is documented in .env.template but was never actually read —
