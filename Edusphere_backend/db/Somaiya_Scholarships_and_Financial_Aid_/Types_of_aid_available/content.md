@@ -1,0 +1,4 @@
+Somaiya is committed to assuring that your Education is Affordable and Worthy of your Investment 
+  * [ ![](https://scholarships.somaiya.edu/assets/financial-aid/images/financial-aid-icon.svg) Financial Aid  Available to students applying for any program under the Somaiya Vidyavihar University (SVU)  ](https://scholarships.somaiya.edu/en/financial-aid)
+  * [ ![](https://scholarships.somaiya.edu/assets/financial-aid/images/somaiya-scholarships-icon.svg) Somaiya Scholarships  Available to all students of Somaiya Vidyavihar and Somaiya Ayurvihar campus.  ](https://scholarships.somaiya.edu/en/somaiya-scholarship)
+  * [ ![](https://scholarships.somaiya.edu/assets/financial-aid/images/institutional-scholarships-icon.png) Institutional Scholarships  Available to students of K J Somaiya School of Engineering through select industry sponsors  ](https://scholarships.somaiya.edu/en/institutional-scholarships)

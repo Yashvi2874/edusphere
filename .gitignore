@@ -1,0 +1,26 @@
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Project specific data and DB (ignore local data)
+data/
+db/
+result_combined.md
+
+# Runtime data. These hold real accounts (with plaintext passwords) and real
+# conversations - they are per-deployment state, not source, and must never be
+# committed. faqs.json stays tracked because it is seed content.
+Edusphere_backend/data/users.json
+Edusphere_backend/data/conversations.json
+Edusphere_backend/data/feedback.json

@@ -1,0 +1,4 @@
+Fee Structure / Programme | Computer Engineering /Information Technology / Artificial Intelligence & Data Science/Computer Science & Business Systems |  Electronics & Telecommunication Engineering / Mechanical Engineering / Electronics & Computer Engineering / Computer & Communication Engineering / Robotics & Artificial Intelligence / Electronics Engineering (VLSI Design & Technology)  
+---|---|---  
+| Resident Indian (RI) | CIWGC/OCI (Issued before 2022)/PIO | NRI/OCI (Issued after 2022)/FN | Resident Indian (RI) | CIWGC/OCI (Issued before 2022)/PIO | NRI/OCI (Issued after 2022)/FN  
+Total fees | 549525 | 549525 | 669525 | 504325 | 504325 | 614325

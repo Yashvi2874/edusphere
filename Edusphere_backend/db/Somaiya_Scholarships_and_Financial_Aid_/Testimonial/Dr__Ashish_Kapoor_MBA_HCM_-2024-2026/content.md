@@ -1,0 +1,2 @@
+![](https://scholarships.somaiya.edu/assets/financial-aid/images/testimonial/shreeya.jpg)
+I am very grateful for the financial contributions you have made in support of my education. Without your help, I may never have been able to complete my studies. Your generosity and help have been an inspiration to me. Again, thank you for your encouragement and financial support.

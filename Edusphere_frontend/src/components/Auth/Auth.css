@@ -1,0 +1,222 @@
+/* Authentication Styles - Matching Feedback Design */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #f7fafc;
+  padding: 20px;
+}
+
+.auth-card {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1d5859;
+  margin-bottom: 1.5rem;
+}
+
+.auth-header p {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #123f3f;
+  margin: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #123f3f;
+}
+
+.form-group input {
+  background-color: #f7fafc;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  color: #1a202c; /* dark text */
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #319795;
+  box-shadow: 0 0 0 2px rgba(49, 151, 149, 0.3);
+}
+
+.form-group input::placeholder {
+  color: #718096; /* darker but still subtle placeholder */
+}
+
+/* Force dark text for browser autofill and keep background consistent */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1a202c;
+  caret-color: #1a202c;
+  box-shadow: 0 0 0px 1000px #f7fafc inset;
+  -webkit-box-shadow: 0 0 0px 1000px #f7fafc inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.error-message {
+  font-weight: 500;
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  background-color: #fed7d7;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #feb2b2;
+}
+
+.auth-button {
+  background-color: #1d5859;
+  color: #ffffff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.auth-button:hover:not(:disabled) {
+  background-color: #123f3f;
+}
+
+.auth-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.google-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: white;
+  color: #333333;
+  padding: 0.75rem;
+  border: 1px solid #dadce0;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 1rem auto;
+  width: 80%;
+}
+
+.google-login-button:hover:not(:disabled) {
+  background-color: #f8f8f8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-button:disabled {
+  background-color: #f8f8f8;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #718096;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.divider:not(:empty)::before {
+  margin-right: 0.5rem;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 0.5rem;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer p {
+  color: #4a5568;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.auth-link {
+  color: #319795;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.auth-link:hover {
+  color: #2c7a7b;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 10px;
+  }
+  
+  .auth-card {
+    padding: 1.5rem;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .auth-button,
+  .google-login-button {
+    width: 100%;
+  }
+}

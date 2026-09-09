@@ -1,0 +1,38 @@
+.main-layout-container {
+    background: #02242e;
+}
+
+.main-layout-flex {
+    display: flex;
+    height: 100vh;
+}
+
+.main-layout-sidebar {
+    width: 20vw;
+    min-width: 250px;
+}
+
+.main-layout-chatbox {
+    flex: 1;
+    padding: 10px;
+    width: 80vw;
+}
+
+@media (max-width: 768px) {
+    .main-layout-flex {
+        flex-direction: column;
+    }
+    
+    .main-layout-sidebar {
+        width: 100%;
+        height: auto;
+        min-height: 15vh;
+        z-index: 20;
+    }
+    
+    .main-layout-chatbox {
+        width: 100%;
+        padding: 5px;
+        height: 85vh;
+    }
+}

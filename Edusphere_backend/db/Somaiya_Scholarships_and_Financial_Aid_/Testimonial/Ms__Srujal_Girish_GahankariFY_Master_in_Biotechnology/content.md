@@ -1,0 +1,3 @@
+Your browser does not support the video tag. 
+![](https://scholarships.somaiya.edu/assets/financial-aid/images/testimonial/ashish.png)
+A scholarship is a vote of confidence in your abilities and future success." I feel incredibly proud, honored, and grateful to have received scholarship assistance. It not only validated my past achievements but also inspired and motivated me to excel in my career without the financial burden. This instilled a sense of pride not only in me but also in my family. A strong profile always stands out from the crowd, and thanks to the smooth application process, I encountered no challenges at any stage, and the team was very helpful and responsive.

@@ -1,0 +1,2 @@
+[UGC-Refund-Policy-2024-and-2018](https://kjsce.s3.ap-south-1.amazonaws.com/Admission+2025/UGC-Refund-Policy-2024-and-2018.pdf)
+![Close](https://kjsce.somaiya.edu/assets/default_asset/img/admission/close-enquire.svg)

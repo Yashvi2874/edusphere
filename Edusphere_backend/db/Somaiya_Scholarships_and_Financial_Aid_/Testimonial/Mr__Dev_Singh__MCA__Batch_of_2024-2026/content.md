@@ -1,0 +1,2 @@
+![](https://scholarships.somaiya.edu/assets/financial-aid/images/testimonial/srujal.jpg)
+The personality development sessions conducted by our college are helping me enhance my confidence, communication, and leadership abilities. These sessions provide valuable insights and practical skills to handle real-world challenges effectively. I truly appreciate the expert guidance and interactive activities that contribute to my personal and professional growth. They are shaping me into a more self-aware and well-rounded individual.

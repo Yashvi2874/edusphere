@@ -1,0 +1,2 @@
+Somaiya Vidyavihar is committed to issue scholarships and aid for deserving students. 
+SOMAIYA VIDYAVIHAR UNIVERSITY SCHOLARSHIP DATANo. of StudentsScholarship Amount…LegendNo. of StudentsScholarship Amount (In Lakhs)180420536711201.74500.76548.661,057.14Zoom OutSCHOLARSHIP AMOUNT (In Lakhs)1,000-400-20002004006008001,0001,2001,400L2021-222022-232023-242024-25ACADEMIC YEARChart100%Chart created using amCharts library

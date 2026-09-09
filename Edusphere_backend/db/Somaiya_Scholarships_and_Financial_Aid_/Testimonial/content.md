@@ -1,0 +1,3 @@
+Read the testimonies of the students who were awarded scholarships from Somaiya Vidyavihar 
+![](https://scholarships.somaiya.edu/assets/financial-aid/images/testimonial/priyaparab.jpg)
+Already struggling with high medical costs due to my illness, the scholarship from Somaiya came as a blessing in disguise. This scholarship ensures I can complete my course without any additional financial burden. I am grateful to the management for this consideration.

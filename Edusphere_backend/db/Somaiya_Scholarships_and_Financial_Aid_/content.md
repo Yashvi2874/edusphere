@@ -1,0 +1,1 @@
+At Somaiya we are committed to making world class education accessible and affordable to students from all walks of life. This is made possible through Somaiya Scholarships and Financial Aid programs

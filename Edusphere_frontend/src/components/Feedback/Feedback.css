@@ -1,0 +1,152 @@
+.feedback-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ensures the container takes up the full height of the viewport */
+  width: 100vw; /* Ensures the container spans the full width of the viewport */
+}
+
+.feedback-box {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 6px rgba(0, 0, 0, 0.1); /* Add shadow to all sides */  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.feedback-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1d5859; /* Tailwind's teal-600 */
+  margin-bottom: 1.5rem;
+}
+
+.feedback-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feedback-option-button {
+  width: 80%;
+  margin: 0 auto;
+  background-color: #1d5859; /* Tailwind's teal-600 */
+  color: #ffffff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.feedback-option-button:hover {
+  background-color: #123f3f; /* Tailwind's teal-700 */
+}
+
+.feedback-textarea {
+  background-color: #f7fafc; /* Tailwind's gray-100 */
+  width: 100%;
+  min-height: 100px;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e0; /* Tailwind's gray-300 */
+  border-radius: 0.25rem;
+  resize: vertical;
+  font-size: 1rem;
+  color: #4a5568; /* Tailwind's gray-700 */
+  overflow: hidden;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: #319795; /* Tailwind's teal-600 */
+  box-shadow: 0 0 0 2px rgba(49, 151, 149, 0.3); /* Tailwind's teal-600 */
+}
+
+.feedback-textarea[type="email"] {
+    min-height: unset; 
+    height: fit-content;
+  }
+
+.feedback-next-button {
+  background-color: #267675; /* Tailwind's teal-600 */
+  color: #ffffff;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.8rem;
+  align-self: flex-end; /* Align the button to the right */
+}
+
+.feedback-next-button:hover {
+  background-color: #2c7a7b; /* Tailwind's teal-700 */
+}
+
+.feedback-error {
+  font-weight: 500;
+  color: #e53e3e; /* Tailwind's red-600 */
+  font-size: 0.875rem; /* Tailwind's text-sm */
+  margin-top: 0.5rem;
+}
+
+.feedback-prompt {
+    font-weight: 500;
+    margin-top: -1rem;
+    font-size: 1rem;
+    color: #123f3f; /* Tailwind's gray-700 */
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .thank-you-prompt {
+    margin-top: -1rem;
+    font-weight: 500;
+    font-size: 1.1rem; /* Slightly larger font size */
+    color: #123f3f; /* Tailwind's teal-600 */
+    margin-bottom: 0rem;
+    text-align: center; /* Center-align the text */
+  }
+
+  .rating-options {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.rating-button {
+    width: 18%;
+  color: #123f3f; 
+  background-color: #f7fafc; /* Tailwind's gray-100 */
+  border: 1px solid #cbd5e0; /* Tailwind's gray-300 */
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.rating-button:hover {
+  background-color: #e6fffa; /* Tailwind's teal-100 */
+  border-color: #319795; /* Tailwind's teal-600 */
+}
+
+.rating-button.selected {
+  background-color: #319795; /* Tailwind's teal-600 */
+  color: #ffffff;
+  border-color: #319795;
+}
+
+.rating-messages-inline {
+  display: flex;
+  justify-content: space-between; /* Space out the messages */
+  margin-top: 0.5rem;
+}
+
+.rating-message {
+  font-size: 0.875rem; /* Tailwind's text-sm */
+  color: #4a5568; /* Tailwind's gray-700 */
+}

@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+sentence-transformers
+torch
+Crawl4AI
+httpx
