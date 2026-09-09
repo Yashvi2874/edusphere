@@ -4,25 +4,30 @@ import { FaTrash, FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icon
 import './Sidebar.css';
 import { AuthContext } from '../Auth/AuthContext';
 
-const Sidebar = ({ chats, selectChat, deleteConversation, startNewConversation, selectedChatIndex, onCategorySelect, activeCategory}) => {
+/**
+ * Only views that actually render something belong here.
+ *
+ * Four of the five old links — Student Projects, Faculty Dashboards, Admissions
+ * Info and TPO — called setSelectedCategory and a console.log, and nothing else.
+ * Nothing was behind them. Dead navigation is worse than none: the first thing
+ * anyone does in a demo is click it.
+ *
+ * College Connect stays because it is real: it loads mentors and events from
+ * the API and renders them.
+ */
+const VIEWS = [
+  { id: null, label: 'Assistant' },
+  { id: 'College Connect', label: 'College Connect' },
+];
+
+const Sidebar = ({ chats, selectChat, deleteConversation, startNewConversation, selectedChatIndex, onCategorySelect, activeCategory }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { user, logout } = useContext(AuthContext);
-  const categories = [
-    'Student Projects',
-    'Faculty Dashboards',
-    'Admissions Info',
-    'Training and Placement Office (TPO)',
-    'College Connect',
-  ];
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleCategoryClick = (category) => {
-    onCategorySelect(category);
   };
 
   const handleLogout = () => {
@@ -40,24 +45,40 @@ const Sidebar = ({ chats, selectChat, deleteConversation, startNewConversation, 
       </button>
       <div className={`sidebar glass-panel animate-slide w-2/3 sm:w-full h-full fixed md:relative md:block ${isSidebarOpen ? 'block' : 'hidden'}`}>
         <h2>EduSphere</h2>
-        <div className="categories">
-         {categories.map((cat, index) => (
-          <div key={index} className='category'>
-            <div 
-              className={`category-header ${activeCategory === cat ? 'active' : ''}`}
-              onClick={() => handleCategoryClick(cat)}
+        <p className="sidebar-tagline">
+          Ask about admissions, scholarships, fees and programmes. Every answer
+          cites the page it came from.
+        </p>
+
+        <nav className="views" aria-label="Sections">
+          {VIEWS.map((view) => (
+            <button
+              key={view.label}
+              type="button"
+              className={`view-link ${activeCategory === view.id ? 'active' : ''}`}
+              aria-current={activeCategory === view.id ? 'page' : undefined}
+              onClick={() => onCategorySelect(view.id)}
             >
-              {cat}
-            </div>
-          </div>
-        ))}
-      </div>
+              {view.label}
+            </button>
+          ))}
+        </nav>
 
         <div className="bottom-actions">
-          <div style={{ position: 'relative' }} onMouseEnter={() => setShowProfileMenu(true)} onMouseLeave={() => setShowProfileMenu(false)}>
-            <button className="profile-button">
-              <FaUserCircle size={18} />
-              {user?.name || 'Profile'}
+          <div
+            className="profile-wrap"
+            onMouseEnter={() => setShowProfileMenu(true)}
+            onMouseLeave={() => setShowProfileMenu(false)}
+          >
+            {/* First name only: the sidebar half is ~118px, and "Yashasvi Gupta"
+                truncates to "Yashasvi..." there, which reads worse than just
+                "Yashasvi". The full name is on the tooltip, and the ellipsis
+                rule below still catches unusually long first names. */}
+            <button className="profile-button" title={user?.name || 'Profile'}>
+              <FaUserCircle size={18} className="profile-icon" />
+              <span className="profile-name">
+                {(user?.name || 'Profile').trim().split(/\s+/)[0]}
+              </span>
             </button>
             {showProfileMenu && (
               <div className="profile-menu">
@@ -69,10 +90,7 @@ const Sidebar = ({ chats, selectChat, deleteConversation, startNewConversation, 
               </div>
             )}
           </div>
-          <button
-            onClick={startNewConversation}
-            className="new-button p-2 rounded hover:bg-[#1b3841]"
-          >
+          <button onClick={startNewConversation} className="new-button">
             New Chat
           </button>
         </div>

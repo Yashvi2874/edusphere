@@ -11,8 +11,11 @@ const CollegeConnect = () => {
     const fetchData = async () => {
       try {
         const [mentorsRes, eventsRes] = await Promise.all([
-          fetch('http://localhost:5001/mentors'),
-          fetch('http://localhost:5001/events')
+          // '/api' goes through the Vite proxy in dev and the same origin in
+          // production. A hardcoded localhost:5001 works only on your machine —
+          // deployed, it would try to reach the visitor's own computer.
+          fetch('/api/mentors'),
+          fetch('/api/events')
         ]);
         
         const mentorsData = await mentorsRes.json();

@@ -206,13 +206,13 @@ const MainLayout = ({ userId, userName }) => {
       <div className="main-layout-flex">
         {/* Sidebar on the left */}
         <div className="main-layout-sidebar">
-          <Sidebar 
-            onCategorySelect={handleCategorySelect} 
+          <Sidebar
             chats={chats}
             selectChat={selectChat}
             startNewConversation={startNewConversation}
             deleteConversation={deleteConversationHandler}
             selectedChatIndex={selectedChatIndex}
+            onCategorySelect={handleCategorySelect}
             activeCategory={selectedCategory}
         />
         </div>

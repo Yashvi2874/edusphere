@@ -198,15 +198,86 @@ async def prepare_rag():
         print("Warning: No content found to create embeddings")
         return None, []
 
-def rank_query(query, top_k=5):
+# Cosine similarity below this is noise, not a match.
+#
+# semantic_search ALWAYS returns top_k results, however badly they match — so an
+# unrelated message still comes back with three confident-looking sources. On
+# this corpus a genuine hit scores around 0.60 while an unrelated query still
+# scrapes ~0.49, so anything under 0.40 is not worth showing a user.
+RELEVANCE_FLOOR = 0.40
+
+# Greetings and pleasantries have no answer in an admissions corpus. Retrieving
+# for them produces the same confident-looking noise, and "hi" is the first
+# thing almost everyone types.
+_GREETING = (
+    r"(hi+|hey+|hello+|yo|hola|namaste|greetings)"
+    r"(\s+(there|everyone|all|team|folks|guys|bot))?"
+    r"|good\s*(morning|afternoon|evening|night)"
+    r"|how\s*(are\s*you|r\s*u)(\s*doing)?"
+    r"|what'?s\s*up|sup"
+)
+_SIGNOFF = (
+    r"thanks?(\s*(a\s*lot|you|so\s*much))?|thank\s*you|thx|ty"
+    r"|ok(ay)?|cool|nice|great|awesome|got\s*it"
+    r"|bye|goodbye|see\s*(you|ya)|cya"
+)
+
+SMALL_TALK = re.compile(
+    r"^\s*(" + _GREETING + r"|" + _SIGNOFF + r"|test(ing)?)\s*[!.?]*\s*$",
+    re.IGNORECASE,
+)
+SIGNOFF_ONLY = re.compile(r"^\s*(" + _SIGNOFF + r")\s*[!.?]*\s*$", re.IGNORECASE)
+
+
+def is_small_talk(message: str) -> bool:
+    """True for greetings and pleasantries that no document can answer."""
+    return bool(SMALL_TALK.match(message or ""))
+
+
+def small_talk_reply(message: str) -> str:
+    """Answer the pleasantry, then say what this assistant is actually for."""
+    capabilities = (
+        "I can answer questions about K. J. Somaiya admissions, scholarships, "
+        "fees, eligibility and programmes, and I cite the page each answer "
+        "came from."
+    )
+    if SIGNOFF_ONLY.match(message or ""):
+        return "Happy to help. " + capabilities
+    return "Hello. " + capabilities + " What would you like to know?"
+
+
+def pretty_title(folder: str) -> str:
+    """
+    Turn 'db\\B_Tech_admission\\Bachelor_of_Technology\\Important_Dates' into
+    'Important Dates'.
+
+    The old version split on '/' only. These paths are built with the OS
+    separator, which on Windows is a backslash, so nothing was ever stripped and
+    the whole raw path was shown to the user as the source title.
+    """
+    parts = [p for p in re.split(r"[\\/]+", folder or "") if p and p != "db"]
+    if not parts:
+        return "Source"
+    return parts[-1].replace("_", " ").strip()
+
+
+def breadcrumb(folder: str) -> str:
+    """'B Tech admission › Bachelor of Technology' — the trail above the title."""
+    parts = [p for p in re.split(r"[\\/]+", folder or "") if p and p != "db"]
+    return " › ".join(p.replace("_", " ").strip() for p in parts[:-1])
+
+
+def rank_query(query, top_k=5, min_score=RELEVANCE_FLOOR):
     if corpus_embeddings is None:
         return []
     query_embedding = model.encode(query, convert_to_tensor=True)
     hits = util.semantic_search(query_embedding, corpus_embeddings, top_k=top_k)[0]
     results = []
     for hit in hits:
-        folder = folder_names[hit["corpus_id"]]
         score = float(hit["score"])
+        if score < min_score:
+            continue
+        folder = folder_names[hit["corpus_id"]]
         content = folder_to_content.get(folder, "")
         results.append({"folder": folder, "score": score, "content": content})
     return results
@@ -232,15 +303,17 @@ async def chat(request: ChatRequest):
         # Ensure user exists in database
         db.create_user(request.user_id)
         
-        # Get ranked results from RAG
-        ranked_results = rank_query(request.message, top_k=3)
-        
+        # Don't search the corpus for "hi" — there is nothing in it to find, and
+        # semantic_search would return three unrelated documents anyway.
+        small_talk = is_small_talk(request.message)
+        ranked_results = [] if small_talk else rank_query(request.message, top_k=3)
+
         # Get conversation history for context
         history = db.get_conversation_history(request.user_id, request.conversation_id)
-        
+
         # Format context from ranked results
         context = "\n\n".join([f"Source [{i+1}]: {r['content']}" for i, r in enumerate(ranked_results)])
-        
+
         # Generate conversational response using LLM
         if ranked_results:
             response_text = await generator.generate_response(
@@ -248,16 +321,21 @@ async def chat(request: ChatRequest):
                 context=context,
                 history=history[-5:] # Send last 5 messages for context
             )
-            
+
             # Format sources for the frontend
             sources = []
             for result in ranked_results:
+                content = result['content'].strip()
                 sources.append({
-                    "title": result['folder'].split('/')[-1].replace('_', ' '),
-                    "content": result['content'][:200] + "...",
+                    "title": pretty_title(result['folder']),
+                    "breadcrumb": breadcrumb(result['folder']),
+                    "content": content[:400] + ("..." if len(content) > 400 else ""),
                     "score": result['score'],
-                    "path": result['folder']
                 })
+        elif small_talk:
+            # Answer the pleasantry, and say what this assistant is actually for.
+            response_text = small_talk_reply(request.message)
+            sources = []
         else:
             response_text = "I couldn't find relevant information for your query in the college database. Please try rephrasing your question or ask about admission requirements, scholarships, or academic programs."
             sources = []

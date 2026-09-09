@@ -14,64 +14,63 @@
   margin-bottom: 20px;
 }
 
-.categories {
+/* Section navigation. Full-width rows with a clear selected state, rather than
+   the old fit-content rows whose only affordance was an underline on hover. */
+.views {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  margin-top: 1.25rem;
 }
 
-.category-header {
-  width: fit-content;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.view-link {
+  width: 100%;
+  text-align: left;
+  padding: 11px 14px;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  border-radius: 8px;
+  color: #cfe3e8;
+  font-size: 0.92rem;
   cursor: pointer;
-  padding: 20px;
-  color: white;
-  border-radius: 5px;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.dropdown-arrow {
-  margin-left: 10px;
-  transition: transform 0.3s ease;
+.view-link:hover {
+  background-color: #1b3841;
+  color: #ffffff;
 }
 
-.dropdown-arrow.open {
-  transform: rotate(90deg);
+.view-link.active {
+  background-color: #20404b;
+  border-left-color: #92d4e6;
+  color: #ffffff;
+  font-weight: 600;
 }
 
-.dropdown-content {
-  max-height: 0; /* Initially hidden */
-  overflow: hidden; /* Hide content when collapsed */
-  transition: max-height 0.3s ease;
-  margin-top: -70px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  margin-left: 10px; 
-}
+/* Two equal halves of the sidebar width, rather than each button sizing itself
+   to its own text — which is why "Yashasvi Gupta" overflowed its pill while
+   "New Chat" sat there with slack.
 
-.dropdown-content.open {
-    max-height: 200px; /* Adjust based on the content height */
-    padding: 10px 20px;
-    margin-top: -70px;
-    margin-left: 10px;  }
-
-.sidebar .category .category-header:hover {
-  scale: 1.02;
-  text-decoration: underline;
-  font-weight: 400;
-}
-
-.sidebar .category .category-header.active {
-  text-decoration: underline;
-}
-
+   GRID, not flex, on purpose: `flex: 1 1 0` on both children still produced
+   104px and 132px, because flex distributes free space with an eye on each
+   item's content. Grid `1fr 1fr` is exactly half each, whatever is inside. */
 .bottom-actions {
   position: absolute;
   top: 79vh;
-  left: 30px;
-  display: flex;
-  align-items: center;
-  gap: -1px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.profile-wrap {
+  position: relative;
+  min-width: 0;   /* without this a grid item refuses to shrink below its text */
 }
 
 .new-button:hover,
@@ -101,19 +100,50 @@
   scale: 1.03;
 }
 
+/* `padding: 0 44 !important` was silently dropped by every browser — 44 has no
+   unit, so the whole declaration is invalid. That is why the label sat flush
+   against the pill edge. */
 .new-button, .profile-button {
-  height: 45px;
-  gap: 5px;
-  padding: 0 44 !important;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin: 10px;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
   background-color: #20404b;
   color: white;
   border: none;
-  border-radius: 10px !important;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.new-button {
+  min-width: 0;
+}
+
+.profile-icon {
+  flex-shrink: 0;
+}
+
+/* A long name truncates with an ellipsis instead of spilling out of the pill.
+   The full name is still available on hover, via the button's title. */
+.profile-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.sidebar-tagline {
+  margin: 0.35rem 0 0;
+  color: #9db9c1;
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .profile-menu {

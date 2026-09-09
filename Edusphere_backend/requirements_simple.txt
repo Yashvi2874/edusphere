@@ -1,6 +1,24 @@
+# Direct dependencies only.
+#
+# requirements.txt is a full `pip freeze` of a development machine — 358 lines
+# including tensorflow, altair and pyinstaller, none of which this project
+# imports. Install from this file instead.
+
+# Web framework
 fastapi
 uvicorn
+
+# Retrieval: embeddings and vector search over the crawled corpus
 sentence-transformers
 torch
+
+# Crawling the source pages
 Crawl4AI
+
+# Answer generation. litellm is the provider-agnostic client generator.py uses;
+# python-dotenv loads GEMINI_API_KEY and LITELLM_MODEL from .env.
+litellm
+python-dotenv
+
+# Outbound HTTP (Google token verification)
 httpx

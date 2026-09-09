@@ -473,11 +473,12 @@ color: #173138}
 .source-item {
   background-color: #1a3a42;
   border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #4c8898;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #35606c;
+  /* The card itself is not clickable any more — only "Show excerpt" is — so it
+     no longer pretends to be, and no longer lifts on hover. */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .source-item:last-child {
@@ -485,42 +486,111 @@ color: #173138}
 }
 
 .source-item:hover {
-  background-color: #20454f;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-  border-color: #92d4e6;
+  background-color: #1e434c;
+  border-color: #4c8898;
 }
 
 .source-header {
   display: flex;
-  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+/* The [1] / [2] the answer cites, so a citation can be traced to a card. */
+.source-index {
+  flex-shrink: 0;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #0b1a1f;
+  border: 1px solid #4c8898;
+  color: #92d4e6;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .source-header h4 {
   margin: 0;
-  color: #9fd0dc; /* brighter title color */
-  font-size: 1rem;
+  color: #9fd0dc;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
-.source-header h4:hover {
-  text-decoration: underline;
+/* The trail above the title, in place of the raw folder path. */
+.source-breadcrumb {
+  color: #7fa6b1;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  margin: 0 0 0.5rem 1.85rem;
+  overflow-wrap: anywhere;
+}
+
+.source-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .source-score {
   background-color: #0b1a1f;
-  color: #92d4e6;
   border: 1px solid #4c8898;
-  padding: 0.25rem 0.6rem;
+  color: #92d4e6;
+  padding: 0.2rem 0.55rem;
   border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* How well it matched, said in words. A bare percentage means nothing to a
+   student, and "49.2%" reads as a failure when it is a reasonable partial hit. */
+.source-score.strong  { color: #86e5b4; border-color: #2f6f52; }
+.source-score.partial { color: #ffd68a; border-color: #7a6330; }
+.source-score.weak    { color: #ffb3a7; border-color: #7d4b45; }
+
+.source-score-value {
+  color: #7fa6b1;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.source-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #92d4e6;
   font-size: 0.75rem;
-  font-weight: bold;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.source-toggle:hover {
+  color: #cfe9f2;
+}
+
+.sources-empty {
+  color: #7fa6b1;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .source-content {
   color: #cfe3e8; /* softer body text */
-  line-height: 1.4;
+  line-height: 1.45;
+  font-size: 0.82rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #2a5561;
+  max-height: 260px;
+  overflow-y: auto;
 }
 
 .source-content p {
