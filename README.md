@@ -95,12 +95,13 @@ start.bat
 ```
 
 **Manual startup:**
-* **Backend:** `cd Edusphere_backend && python -m venv .venv && .venv\Scripts\activate && pip install -r requirements.txt && python app.py`
+* **Backend:** `cd Edusphere_backend && python -m venv .venv && .venv\Scripts\activate && pip install -r requirements_simple.txt && python app.py`
 * **Frontend:** `cd Edusphere_frontend && npm install && npm run dev`
 
-> `requirements.txt` is a full environment freeze and installs a great deal you
-> do not need. `requirements_simple.txt` has just the direct dependencies and is
-> the faster path.
+> Install from `requirements_simple.txt` — the direct dependencies, which is what
+> `start.bat` uses too. `requirements.txt` is a full environment freeze kept for
+> reference; it pins 358 packages including TensorFlow and PyInstaller, none of
+> which this project imports.
 
 **Access points:**
 - **Web application:** `http://localhost:3000`
