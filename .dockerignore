@@ -1,0 +1,37 @@
+# Kept deliberately simple: no "!" negation patterns.
+#
+# An earlier version re-included files with "!" after excluding them with a
+# broad "**" pattern, and BuildKit rejected the context with
+# "invalid file request" on an unrelated file. Plain excludes only.
+
+# Secrets. Never copy a .env into an image - pass it at run time.
+Edusphere_backend/.env
+Edusphere_frontend/.env
+
+# Rebuilt during the build
+Edusphere_frontend/node_modules
+Edusphere_frontend/dist
+Edusphere_frontend/.vite
+
+# Python build artefacts and local virtualenvs
+Edusphere_backend/__pycache__
+Edusphere_backend/.venv
+Edusphere_backend/venv
+
+# Runtime data. The container starts empty, or with a mounted volume.
+# faqs.json is seed content and is deliberately NOT excluded.
+Edusphere_backend/data/users.json
+Edusphere_backend/data/conversations.json
+Edusphere_backend/data/feedback.json
+
+# The 358-package environment freeze; the image installs requirements_simple.txt
+Edusphere_backend/requirements.txt
+
+# Repository, editor and docs - none of it belongs in a runtime image
+.git
+.gitignore
+.vscode
+.idea
+README.md
+ui_screenshot.png
+test_integration.py

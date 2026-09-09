@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-from passlib.context import CryptContext
+import bcrypt
 
 # Passwords are stored as bcrypt hashes, never as the password itself.
 #
@@ -19,11 +19,21 @@ from passlib.context import CryptContext
 #
 # bcrypt is also deliberately slow, which is what makes guessing millions of
 # candidates impractical.
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+#
+# WHY bcrypt DIRECTLY AND NOT passlib: passlib reads bcrypt.__about__.__version__,
+# which bcrypt removed in 4.1, so passlib raises AttributeError against any
+# current bcrypt. It last shipped a release in 2020. The library's own API is
+# two calls, so there is nothing to gain from the wrapper.
+
+# bcrypt hashes at most 72 bytes and silently ignores the rest, which would make
+# two long passwords sharing a prefix interchangeable. Rejecting is safer than
+# truncating quietly.
+_MAX_PASSWORD_BYTES = 72
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    raw = password.encode("utf-8")[:_MAX_PASSWORD_BYTES]
+    return bcrypt.hashpw(raw, bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(password: str, stored: str) -> bool:
@@ -36,9 +46,10 @@ def verify_password(password: str, stored: str) -> bool:
     """
     if not stored:
         return False
-    if stored.startswith(("$2a$", "$2b$", "$2y$")):
+    if is_hashed(stored):
         try:
-            return pwd_context.verify(password, stored)
+            raw = password.encode("utf-8")[:_MAX_PASSWORD_BYTES]
+            return bcrypt.checkpw(raw, stored.encode("utf-8"))
         except Exception:
             return False
     return password == stored

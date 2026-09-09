@@ -20,8 +20,8 @@ Crawl4AI
 litellm
 python-dotenv
 
-# Password hashing. bcrypt is the backend passlib uses here.
-passlib
+# Password hashing. Used directly rather than through passlib, which reads a
+# bcrypt attribute removed in bcrypt 4.1 and has not shipped since 2020.
 bcrypt
 
 # Outbound HTTP (Google token verification)

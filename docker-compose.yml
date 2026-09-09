@@ -1,0 +1,39 @@
+# Run the whole app locally with one command:
+#
+#   docker compose up --build
+#
+# Then open http://localhost:5001 - frontend and API are both served there.
+#
+# Put your GEMINI_API_KEY in Edusphere_backend/.env first. That file is
+# gitignored and is read at run time; it is never copied into the image.
+
+services:
+  edusphere:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: edusphere:latest
+    container_name: edusphere
+    ports:
+      - "5001:5001"
+    env_file:
+      - Edusphere_backend/.env
+    environment:
+      PORT: 5001
+    volumes:
+      # Keep users, conversations and feedback across restarts. Without this a
+      # rebuild starts with an empty store, because runtime data is deliberately
+      # not baked into the image.
+      - edusphere-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5001/"]
+      interval: 30s
+      timeout: 10s
+      # The embedding model loads at startup and takes a while on a cold boot,
+      # so do not start failing the check before it has had a chance.
+      start_period: 120s
+      retries: 3
+
+volumes:
+  edusphere-data:

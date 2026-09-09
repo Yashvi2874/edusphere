@@ -22,10 +22,35 @@ if sys.platform.startswith('win'):
 # Initialize FastAPI app
 app = FastAPI(title="Edusphere Chatbot API", version="1.0.0")
 
-# CORS middleware
+
+# The frontend calls /api/chat, /api/login and so on.
+#
+# In development Vite proxies those and strips the "/api" before they reach
+# here. In a deployed build there is no Vite - FastAPI serves the frontend and
+# the API from one origin - so the prefix arrives intact and every route would
+# 404. Stripping it here means the same fetch paths work in both places, and no
+# route definition has to know about it.
+@app.middleware("http")
+async def strip_api_prefix(request, call_next):
+    path = request.scope.get("path", "")
+    if path == "/api":
+        request.scope["path"] = "/"
+    elif path.startswith("/api/"):
+        request.scope["path"] = path[4:]
+    return await call_next(request)
+
+
+# In production the frontend is served from this same origin, so no cross-origin
+# request happens at all. These entries are for local development, where Vite
+# runs on its own port. ALLOWED_ORIGINS can add more without a code change.
+_origins = ["http://localhost:3000", "http://localhost:5173", "http://localhost:4173"]
+_extra = os.getenv("ALLOWED_ORIGINS", "").strip()
+if _extra:
+    _origins += [o.strip() for o in _extra.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:4173"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -292,8 +317,25 @@ async def startup_event():
     corpus_embeddings, folder_names = await prepare_rag()
     print("RAG system initialized successfully!")
 
+# Where a built frontend lives, if one was copied in (the Docker image does).
+# Defined here rather than lower down because the "/" route below needs it, and
+# FastAPI matches routes in the order they are declared.
+FRONTEND_DIST = Path(os.getenv("FRONTEND_DIST", Path(__file__).parent / "static"))
+HAS_FRONTEND = FRONTEND_DIST.is_dir() and (FRONTEND_DIST / "index.html").exists()
+
+
 @app.get("/")
 async def root():
+    """
+    The app itself when a frontend is built in, otherwise a liveness message.
+
+    This route has to serve index.html itself: it is declared before the
+    catch-all at the bottom, and FastAPI takes the first match, so a catch-all
+    added later never sees "/".
+    """
+    if HAS_FRONTEND:
+        from fastapi.responses import FileResponse
+        return FileResponse(FRONTEND_DIST / "index.html")
     return {"message": "Edusphere Chatbot API is running!"}
 
 @app.post("/chat", response_model=List[ChatResponse])
@@ -484,6 +526,44 @@ async def google_login(request: GoogleLoginRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during Google login: {str(e)}")
 
+
+# ---------------------------------------------------------------------------
+# Serve the built frontend, when there is one.
+#
+# This block is deliberately LAST: a mount at "/" catches every path that no
+# earlier route matched, so mounting it above the API would swallow /chat and
+# /login. Declared after them, it only ever sees what is left over.
+#
+# It is also optional. In development the folder does not exist and Vite serves
+# the frontend instead, so this is skipped and nothing changes.
+# ---------------------------------------------------------------------------
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+if HAS_FRONTEND:
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        """
+        Hand every unmatched path to index.html.
+
+        The frontend is a single-page app: it does its own routing in the
+        browser, so a deep link like /feedback has no file behind it. Returning
+        index.html lets the app boot and route the URL itself, instead of the
+        404 a plain static server would give.
+        """
+        candidate = FRONTEND_DIST / full_path
+        if full_path and candidate.is_file():
+            return FileResponse(candidate)
+        return FileResponse(FRONTEND_DIST / "index.html")
+
+    print(f"Serving frontend from {FRONTEND_DIST}")
+else:
+    print("No built frontend found - API only (run Vite separately in development)")
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5001)
+    # PORT is what most hosts inject; 5001 keeps local behaviour unchanged.
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "5001")))
