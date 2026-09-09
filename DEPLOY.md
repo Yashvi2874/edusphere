@@ -16,6 +16,38 @@ answer.
 
 ---
 
+## Optional — "Sign in with Google"
+
+**The button is hidden unless a real Google OAuth client id is configured.**
+Email and password sign-in always works; this is an extra.
+
+It is hidden rather than shown-and-broken because the client id falls back to
+the placeholder `YOUR_GOOGLE_CLIENT_ID`, which Google rejects — so the button
+used to appear and then fail with nothing to explain why.
+
+To enable it:
+
+1. [console.cloud.google.com](https://console.cloud.google.com) → create a project
+2. **APIs & Services → OAuth consent screen** → External → fill in the app name
+   and your email
+3. **Credentials → Create Credentials → OAuth client ID → Web application**
+4. Under **Authorised JavaScript origins**, add every origin you will use:
+   - `http://localhost:5001` (Docker)
+   - `http://localhost:3000` (Vite dev)
+   - your deployed URL, e.g. `https://edusphere-xxxx.onrender.com`
+5. Copy the client id — it ends in `.apps.googleusercontent.com` — into
+   `Edusphere_frontend/.env`:
+
+```
+VITE_GOOGLE_CLIENT_ID=1234567890-abcdefg.apps.googleusercontent.com
+```
+
+6. Rebuild. Vite bakes environment variables in at **build** time, so an
+   existing container will not pick this up until it is rebuilt.
+
+The origins must match exactly, including `http` vs `https` and the port.
+A mismatch gives `redirect_uri_mismatch` or `origin_mismatch`.
+
 ## Run it locally first
 
 ```bash
