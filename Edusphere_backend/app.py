@@ -503,26 +503,52 @@ async def login(request: LoginRequest):
 
 @app.post("/google-login", response_model=AuthResponse)
 async def google_login(request: GoogleLoginRequest):
-    """Google OAuth login"""
+    """
+    Sign in with a Google access token.
+
+    The client sends an ACCESS token (@react-oauth/google's useGoogleLogin
+    returns access_token). This used to be handed to
+    tokeninfo?id_token=... - a different kind of token entirely - so Google
+    answered 400 and every Google sign-in failed with "Invalid Google token",
+    however correctly the client id was configured.
+
+    An access token is checked by using it: ask Google's userinfo endpoint who
+    it belongs to. If the token is invalid or expired, that call fails.
+
+    The identity then comes from GOOGLE's answer, not from the request body.
+    The old code trusted the email the client sent and only cross-checked it,
+    which meant anyone could have posted somebody else's address and signed in
+    as them once the check ahead of it was broken.
+    """
     try:
-        # Verify the token with Google
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=15) as client:
             response = await client.get(
-                f"https://oauth2.googleapis.com/tokeninfo?id_token={request.accessToken}"
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                headers={"Authorization": f"Bearer {request.accessToken}"},
             )
-            
-            if response.status_code != 200:
-                raise HTTPException(status_code=401, detail="Invalid Google token")
-            
-            token_info = response.json()
-            
-            # Verify that the token is for the correct user
-            if token_info.get("email") != request.email:
-                raise HTTPException(status_code=401, detail="Email mismatch")
-        
-        # Check if user exists, if not create them
-        result = db.get_or_create_google_user(request.email, request.name, request.googleId)
+
+        if response.status_code != 200:
+            raise HTTPException(status_code=401, detail="Invalid or expired Google token")
+
+        info = response.json()
+        email = info.get("email")
+        if not email:
+            raise HTTPException(status_code=401, detail="Google token carries no email")
+
+        # An unverified address on a Google account is not proof of ownership.
+        if not info.get("email_verified", False):
+            raise HTTPException(status_code=401, detail="Google account email is not verified")
+
+        result = db.get_or_create_google_user(
+            email,
+            info.get("name") or email.split("@")[0],
+            info.get("sub"),
+        )
         return AuthResponse(**result)
+
+    except HTTPException:
+        # Already a considered response - do not turn a 401 into a 500 below.
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during Google login: {str(e)}")
 
